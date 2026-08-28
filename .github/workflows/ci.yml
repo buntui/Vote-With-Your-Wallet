@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Dependency vulnerabilities
+        run: npm audit --audit-level=high
+      - name: Fail if a secret-shaped string is committed
+        run: |
+          if grep -rInE '(api[_-]?key|secret|access[_-]?token|private[_-]?key)[[:space:]]*[:=][[:space:]]*["'"'"'][A-Za-z0-9_\-]{16,}' \
+             --include='*.ts' --include='*.tsx' --include='*.py' --include='*.json' \
+             --exclude-dir=node_modules . ; then
+            echo "Possible committed credential above."
+            exit 1
+          fi
+          echo "No credential-shaped strings found."
+
+  data-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Regenerate the grid and confirm it is reproducible
+        run: |
+          cp src/data/grid.json /tmp/committed.json
+          python pipeline/generate_grid.py --out src/data/grid.json
+          python - <<'PY'
+          import json
+          a = json.load(open("/tmp/committed.json"))
+          b = json.load(open("src/data/grid.json"))
+          if a["cells"] != b["cells"]:
+              raise SystemExit(
+                  "The committed grid does not match a fresh run of the pipeline. "
+                  "Either the rules engine changed upstream or the grid was edited "
+                  "by hand. Re-run `npm run data` and commit the result."
+              )
+          print("Grid reproduces exactly.")
+          PY

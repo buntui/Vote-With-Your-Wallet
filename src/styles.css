@@ -1,0 +1,358 @@
+/*
+  Visual direction: a measuring instrument, not a campaign.
+
+  Palette is deliberately non-partisan. There is no red and no blue anywhere
+  in the interface. Positive and negative amounts are distinguished by a
+  slate/ochre pair plus an explicit sign and an explicit word, because meaning
+  is never carried by colour alone (WCAG 2.2 AA, 1.4.1).
+*/
+
+:root {
+  --ink: #14171a;
+  --ink-2: #4a5158;
+  --ink-3: #767e86;
+  --paper: #f6f7f5;
+  --surface: #ffffff;
+  --rule: #dfe2dd;
+  --rule-strong: #c3c8c1;
+
+  --gain: #0e6f62;
+  --gain-bg: #e6f0ee;
+  --loss: #8a5a00;
+  --loss-bg: #f4ecdd;
+  --mark: #1f2933;
+
+  --display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --gap: 1rem;
+  --radius: 4px;
+  --maxw: 44rem;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  line-height: 1.15;
+  margin: 0 0 0.5rem;
+}
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1rem; }
+
+p { margin: 0 0 0.85rem; }
+a { color: var(--ink); text-underline-offset: 3px; }
+
+:focus-visible {
+  outline: 2px solid var(--mark);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.shell {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 1rem 5rem;
+}
+
+/* --- masthead ---------------------------------------------------------- */
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.masthead-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0.7rem 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.wordmark {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.nav {
+  display: flex;
+  gap: 0.9rem;
+  margin-left: auto;
+  font-size: 0.8rem;
+}
+.nav a { color: var(--ink-2); text-decoration: none; }
+.nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; }
+
+/* --- data provenance strip --------------------------------------------- */
+.provenance {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 0.35rem 1rem;
+  text-align: center;
+}
+.provenance strong { color: var(--ink); font-weight: 600; }
+
+/* --- cards -------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin: 0 0 0.9rem;
+}
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 1.6rem 0 0.5rem;
+}
+
+/* --- the number --------------------------------------------------------- */
+.figure {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2rem, 9vw, 2.9rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  display: block;
+}
+.figure.gain { color: var(--gain); }
+.figure.loss { color: var(--loss); }
+.figure-unit {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  display: block;
+  margin-top: 0.35rem;
+}
+
+/* --- chips -------------------------------------------------------------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  padding: 0.15rem 0.4rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip.high { background: var(--gain-bg); border-color: #a8ccc5; color: #0b564c; }
+.chip.medium { background: #eeefec; }
+.chip.low { background: var(--loss-bg); border-color: #d8c49a; color: #6b4700; }
+
+/* --- the signature element: the evidence rail --------------------------- */
+/*
+  Four typed stages, drawn as a rail. The filled portion is how far this
+  policy has actually travelled. A stated intention sits off the left end of
+  the rail entirely, which is the point.
+*/
+.rail {
+  margin: 0.9rem 0 0.2rem;
+}
+.rail-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-bottom: 0.4rem;
+}
+.rail-seg {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 1px;
+}
+.rail-seg.filled { background: var(--mark); }
+.rail-labels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  font-family: var(--mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.rail-labels span.reached { color: var(--ink); font-weight: 500; }
+.rail-note {
+  font-size: 0.78rem;
+  color: var(--ink-2);
+  margin-top: 0.5rem;
+}
+.rail.promise .rail-track { opacity: 0.45; }
+
+/* --- breakdown table ---------------------------------------------------- */
+.rows { border-top: 1px solid var(--rule); margin-top: 0.85rem; }
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.9rem;
+}
+.row-amount { font-family: var(--mono); font-weight: 500; white-space: nowrap; }
+.row-label { color: var(--ink-2); }
+
+/* --- ranked list -------------------------------------------------------- */
+.ranked { list-style: none; margin: 0; padding: 0; counter-reset: rank; }
+.ranked li {
+  counter-increment: rank;
+  display: grid;
+  grid-template-columns: 1.4rem 1fr auto;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ranked li::before {
+  content: counter(rank);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+.ranked .exposure { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); }
+.ranked .why { grid-column: 2 / -1; font-size: 0.8rem; color: var(--ink-3); margin-top: 0.15rem; }
+
+/* --- forms -------------------------------------------------------------- */
+.field { margin-bottom: 1rem; }
+label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.3rem; }
+.hint { font-size: 0.78rem; color: var(--ink-3); margin: 0.25rem 0 0; }
+input, select {
+  width: 100%;
+  font: inherit;
+  font-family: var(--mono);
+  padding: 0.55rem 0.6rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+.seg { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.seg button {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface);
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--ink-2);
+}
+.seg button[aria-pressed="true"] {
+  background: var(--mark);
+  border-color: var(--mark);
+  color: #fff;
+}
+
+button.primary {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.7rem 1.1rem;
+  background: var(--mark);
+  color: #fff;
+  border: 1px solid var(--mark);
+  border-radius: var(--radius);
+  cursor: pointer;
+  width: 100%;
+}
+button.ghost {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--ink-2);
+}
+
+details { border-top: 1px solid var(--rule); padding: 0.6rem 0; }
+details summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  list-style: none;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before { content: "+ "; font-family: var(--mono); color: var(--ink-3); }
+details[open] summary::before { content: "\2212 "; }
+details .body { font-size: 0.86rem; color: var(--ink-2); padding-top: 0.5rem; }
+details .body ul { margin: 0.3rem 0; padding-left: 1.1rem; }
+details .body li { margin-bottom: 0.3rem; }
+
+.notice {
+  border: 1px solid var(--rule-strong);
+  border-left: 3px solid var(--mark);
+  background: var(--surface);
+  padding: 0.75rem 0.9rem;
+  font-size: 0.86rem;
+  border-radius: var(--radius);
+  margin-bottom: 0.9rem;
+}
+
+.footnote { font-size: 0.78rem; color: var(--ink-3); }
+
+.skip {
+  position: absolute;
+  left: -9999px;
+}
+.skip:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+  z-index: 50;
+  background: var(--surface);
+  padding: 0.5rem;
+  border: 1px solid var(--mark);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card { animation: rise 260ms ease-out both; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+}
